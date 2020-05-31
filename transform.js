@@ -13,44 +13,68 @@ export function parse (source){
 }
 
 /**
- * @param {ParsedSchema} rootSchema
+ * @param {Yapi.Schema} rootSchema
  */
 export function emit(rootSchema){
     let descriptionStr = formatDescription(rootSchema);
+    let result = descriptionStr;
 
     if(rootSchema.type == "object"){
-        let propertiesStr = ""
-
-        if(rootSchema.properties){
-            let tab = "    ";
-            for(let propName in rootSchema.properties){
-                let propSchema = rootSchema.properties[propName];
-
-                let descriptionStr = formatDescription(propSchema);
-                if(descriptionStr) descriptionStr = tab + descriptionStr;
-
-                if(propSchema.type == "object"){
-                    
-                } else {
-                    let type = findType(propSchema);
-                    propertiesStr += `${descriptionStr}${tab}${propName}?: ${type};\n`
-                }
-            }
-        }
-        return `${descriptionStr}interface Result {\n${propertiesStr}}\n`;
+        let propertiesStr = getPropertiesStr(rootSchema);
+        result += `interface Result ${propertiesStr}\n`;
+    } else if(rootSchema.type == "array"){
+        result += 
+`interface Result {\n${formatDescription(rootSchema.items, 1)}    [index: number]: ${getPropertiesStr(rootSchema.items, 2)};\n}\n`
     } else {
-        let type = findType(rootSchema);
-        return `${descriptionStr}type Result = ${type};\n`
+        let type = findPrimitiveType(rootSchema);
+        result += `type Result = ${type};\n`
+    }
+
+    return result;
+
+    /**
+     * 
+     * @param {Yapi.Schema} parentSchema 
+     * @param {number} depth 
+     */
+    function getPropertiesStr(parentSchema, depth = 1) {
+        if(findPrimitiveType(parentSchema)){
+            return findPrimitiveType(parentSchema);
+        }
+
+        if(parentSchema.type == "object"){
+            let tab = "    ".repeat(depth);
+            let propertiesStr = "{";
+            const hasProperty = Boolean(Object.keys(parentSchema.properties ?? {}).length);
+    
+            if(hasProperty) propertiesStr += "\n";
+    
+            for (let propName in (parentSchema.properties || {})) {
+                let childSchema = parentSchema.properties[propName];
+    
+                let requiredStr = (parentSchema.required || []).includes(propName) ? "" : "?";
+                propertiesStr += formatDescription(childSchema, depth);
+                propertiesStr += formatRow(`${propName}${requiredStr}: ${getPropertiesStr(childSchema, depth + 1)};`, depth);
+            }
+            let newline = hasProperty ? "    ".repeat(depth - 1) : "";
+            propertiesStr += `${newline}}`;
+    
+            return propertiesStr;
+        }
     }
 
     /**
      * @param {Yapi.Schema} schema 
      */
-    function findType(schema) {
+    function findPrimitiveType(schema) {
         return ["number", "string", "null", "bool"].find(type => schema.type == type);
     }
-    function formatDescription(schema){
-        return schema.description ? `/** ${schema.description} */\n` : "";
+    function formatDescription(schema, depth = 0){
+        return schema.description ? formatRow(`/** ${schema.description} */`, depth) : "";
+    }
+    function formatRow(content, depth = 0){
+        const TAB_SIZE = 4
+        return `${" ".repeat(TAB_SIZE).repeat(depth)}${content}\n`;
     }
 }
 
