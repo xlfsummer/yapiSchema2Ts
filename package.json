@@ -1,0 +1,13 @@
+{
+  "name": "yapi2ts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "transform.test.js",
+  "type": "module",
+  "scripts": {
+    "test": "node transform.test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
