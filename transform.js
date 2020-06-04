@@ -37,7 +37,7 @@ export function emit(rootSchema){
      * @param {Yapi.Schema} parentSchema 
      * @param {number} depth 
      */
-    function getPropertiesStr(parentSchema, depth = 1) {
+    function getPropertiesStr(parentSchema = {}, depth = 1) {
         if(findPrimitiveType(parentSchema)){
             return findPrimitiveType(parentSchema);
         }
@@ -61,6 +61,12 @@ export function emit(rootSchema){
     
             return propertiesStr;
         }
+
+        if(parentSchema.type == "array"){
+            return getPropertiesStr(parentSchema.items, depth) + "[]";
+        }
+
+        return "any";
     }
 
     /**

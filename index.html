@@ -8,12 +8,15 @@
 <body>
     <form id="form">
         <textarea name="data" placeholder="paste yapi json here"></textarea>
-        <button>提交</button>
+        <button>submit</button>
     </form>
     <output>
         <pre id="output"></pre>
+        <button onclick="
+            navigator.clipboard.writeText(window['output'].innerText)
+        ">copy</button> 
     </output>
-    <script src="script.js">
+    <script src="script.js" type="module">
     </script>
 </body>
 </html>

@@ -1,3 +1,5 @@
+import { transform } from "./transform.js";
+
 function output(value){
     let outputEl = document.getElementById("output");
     outputEl.textContent = value;
@@ -11,11 +13,5 @@ formEl.onsubmit = function(ev){
     /** @type {HTMLTextAreaElement} */
     let textArea = formEl["data"];
     let yapiSchema = textArea.value;
-    console.log(yapiSchema);
-    output(yapiSchema);
+    output(transform(JSON.parse(yapiSchema)));
 };
-
-/** @param {string} yapiSchema */
-function transform(yapiSchema){
-
-}

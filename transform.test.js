@@ -223,7 +223,7 @@ test("数组 + 注释", () => {
 `);
 });
 
-test("数组 + 对象 + 注释", () => {
+test("数组 > 对象 + 注释", () => {
     /** @type {Yapi.Schema} */
     let input = {
         type: "array", items: {
@@ -242,4 +242,117 @@ test("数组 + 对象 + 注释", () => {
     };
 }
 `);
+});
+
+test("对象 > 数组", () => {
+    /** @type {Yapi.Schema} */
+    let input = {
+        type: "object",
+        properties: {
+            p1: {
+                type: "array"
+            }
+        }
+    }
+    assert.equal(transform(input), 
+    `interface Result {
+    p1?: any[];
+}
+`
+)
+});
+
+test("对象 > 数组 > 简单类型", () => {
+    /** @type {Yapi.Schema} */
+    let input = {
+        type: "object",
+        properties: {
+            p1: {
+                type: "array",
+                items: {
+                    type: "number"
+                }
+            }
+        }
+    }
+    assert.equal(transform(input), 
+    `interface Result {
+    p1?: number[];
+}
+`
+)
+});
+
+test("对象 > 数组 > 对象", () => {
+    /** @type {Yapi.Schema} */
+    let input = {
+        type: "object",
+        properties: {
+            p1: {
+                type: "array",
+                items: {
+                    type: "object"
+                }
+            }
+        }
+    }
+    assert.equal(transform(input), 
+    `interface Result {
+    p1?: {}[];
+}
+`
+)
+});
+
+test("对象 > 数组 > 对象 > 字符串", () => {
+    /** @type {Yapi.Schema} */
+    let input = {
+        type: "object",
+        properties: {
+            p1: {
+                type: "array",
+                items: {
+                    type: "object",
+                    properties: {
+                        p2: { type: "string" }
+                    },
+                    required: ["p2"]
+                }
+            }
+        }
+    }
+    assert.equal(transform(input), 
+    `interface Result {
+    p1?: {
+        p2: string;
+    }[];
+}
+`
+)
+});
+
+test("对象 > 数组 > 数组 > 字符串", () => {
+    /** @type {Yapi.Schema} */
+    let input = {
+        type: "object",
+        properties: {
+            p1: {
+                type: "array",
+                items: {
+                    type: "array",
+                    items: {
+                        type: "string"
+                    }
+                },
+                description: "abc"
+            }
+        }
+    }
+    assert.equal(transform(input), 
+    `interface Result {
+    /** abc */
+    p1?: string[][];
+}
+`
+)
 });
