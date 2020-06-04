@@ -25,11 +25,3 @@ declare namespace Yapi {
         mock?: { mock: string }
     }
 }
-
-type O<K extends string> = { prop: Record<K, any>, required?: K[] }
-// type T = T extends O<infer T2> ? O<T2> : never;
-
-
-interface A {
-    [x: number]: string
-}
