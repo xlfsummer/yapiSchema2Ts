@@ -1,3 +1,5 @@
+/// <reference path="yapi.d.ts" />
+
 let api1: Yapi.Schema = {
   $schema: "http://json-schema.org/draft-04/schema#",
   type: "object",
