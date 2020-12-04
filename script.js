@@ -13,5 +13,12 @@ formEl.onsubmit = function(ev){
     /** @type {HTMLTextAreaElement} */
     let textArea = formEl["data"];
     let yapiSchema = textArea.value;
-    output(transform(JSON.parse(yapiSchema)));
+    try {
+        output(transform(JSON.parse(yapiSchema)));
+        navigator.clipboard.writeText(window['output'].innerText);
+        window['tips'].innerText = "copied ✔";
+    }catch(e){
+        output('');
+        window['tips'].innerText = e.message;
+    }
 };

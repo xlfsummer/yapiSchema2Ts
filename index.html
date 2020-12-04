@@ -8,10 +8,11 @@
 <body>
     <form id="form">
         <textarea name="data" placeholder="paste yapi schema json here" rows="15" style="width: 800px;"></textarea>
-        <button>transform</button>
+        <br/>
+        <button type="submit" accesskey="t"><u>t</u>ransform and copy result</button>
+        <span id="tips"></span>
     </form>
     <output>
-        <button onclick="navigator.clipboard.writeText(window['output'].innerText);">copy result</button> 
         <pre id="output"></pre>
     </output>
     <script src="script.js" type="module"></script>
